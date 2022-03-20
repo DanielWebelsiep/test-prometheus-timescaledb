@@ -1,0 +1,109 @@
+version: '3.9'
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:2.6.0-pg14
+    container_name: timescaledb
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+       - timescaledb-data:/var/lib/postgresql/data
+
+  promscale:
+    container_name: promscale
+    image: timescale/promscale:0.10.0
+    ports:
+      - 9201:9201
+    restart: unless-stopped
+    depends_on:
+      - timescaledb
+    environment:
+      PROMSCALE_DB_CONNECT_RETRIES: 10
+      PROMSCALE_WEB_TELEMETRY_PATH: /metrics
+      PROMSCALE_DB_URI: postgres://postgres:password@timescaledb:5432/postgres?sslmode=allow
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.33.5
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    command: 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=1h"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  node_exporter:
+    container_name: node_exporter
+    image: prom/node-exporter:v1.3.1
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:8.4.3
+    restart: unless-stopped
+    ports: 
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      
+  wildfly:
+    container_name: wildfly1
+    image: bitnami/wildfly:26.0.1
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    environment:
+      WILDFLY_USERNAME: user
+      WILDFLY_PASSWORD: password    
+      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+
+  wildfly2:
+    container_name: wildfly2
+    image: bitnami/wildfly:26.0.1
+    restart: unless-stopped
+    ports:
+      - "18080:8080"
+      - "19990:9990"
+    environment:
+      WILDFLY_USERNAME: user
+      WILDFLY_PASSWORD: password
+      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+      
+  wildfly3:
+    container_name: wildfly3
+    image: bitnami/wildfly:26.0.1
+    restart: unless-stopped
+    ports:
+      - "28080:8080"
+      - "29990:9990"
+    environment:
+      WILDFLY_USERNAME: user
+      WILDFLY_PASSWORD: password
+      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+      
+  wildfly4:
+    container_name: wildfly4
+    image: bitnami/wildfly:26.0.1
+    restart: unless-stopped
+    ports:
+      - "38080:8080"
+      - "39990:9990"
+    environment:
+      WILDFLY_USERNAME: user
+      WILDFLY_PASSWORD: password
+      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+
+volumes:
+  timescaledb-data:
+  prometheus-data:
+  grafana-data:
