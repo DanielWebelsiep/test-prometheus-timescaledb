@@ -57,51 +57,48 @@ services:
       
   wildfly:
     container_name: wildfly1
-    image: bitnami/wildfly:26.0.1
+    image: jboss/wildfly:25.0.0.Final
     restart: unless-stopped
     ports:
       - "8080:8080"
       - "9990:9990"
-    environment:
-      WILDFLY_USERNAME: user
-      WILDFLY_PASSWORD: password    
-      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+    command: "/opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-microprofile.xml -bmanagement=0.0.0.0 -b 0.0.0.0"
+    volumes:
+      - ./deploy1:/opt/jboss/wildfly/standalone/deployments
+    
 
   wildfly2:
     container_name: wildfly2
-    image: bitnami/wildfly:26.0.1
+    image: jboss/wildfly:25.0.0.Final
     restart: unless-stopped
     ports:
       - "18080:8080"
       - "19990:9990"
-    environment:
-      WILDFLY_USERNAME: user
-      WILDFLY_PASSWORD: password
-      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+    command: "/opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-microprofile.xml -bmanagement=0.0.0.0 -b 0.0.0.0"
+    volumes:
+      - ./deploy2:/opt/jboss/wildfly/standalone/deployments
       
   wildfly3:
     container_name: wildfly3
-    image: bitnami/wildfly:26.0.1
+    image: jboss/wildfly:25.0.0.Final
     restart: unless-stopped
     ports:
       - "28080:8080"
       - "29990:9990"
-    environment:
-      WILDFLY_USERNAME: user
-      WILDFLY_PASSWORD: password
-      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+    command: "/opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-microprofile.xml -bmanagement=0.0.0.0 -b 0.0.0.0"
+    volumes:
+      - ./deploy3:/opt/jboss/wildfly/standalone/deployments
       
   wildfly4:
     container_name: wildfly4
-    image: bitnami/wildfly:26.0.1
+    image: jboss/wildfly:25.0.0.Final
     restart: unless-stopped
     ports:
       - "38080:8080"
       - "39990:9990"
-    environment:
-      WILDFLY_USERNAME: user
-      WILDFLY_PASSWORD: password
-      WILDFLY_MANAGEMENT_LISTEN_ADDRESS: 0.0.0.0
+    command: "/opt/jboss/wildfly/bin/standalone.sh --server-config=standalone-microprofile.xml -bmanagement=0.0.0.0 -b 0.0.0.0"
+    volumes:
+      - ./deploy4:/opt/jboss/wildfly/standalone/deployments
 
 volumes:
   timescaledb-data:
